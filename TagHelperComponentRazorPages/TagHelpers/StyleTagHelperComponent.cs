@@ -17,7 +17,7 @@ namespace TagHelperComponentRazorPages.TagHelpers
 			"border-radius: 5px; }" +
 			"</style>";
 
-		public int Order => 2;
+		public int Order => 1;
 
 		public void Init(TagHelperContext context) { }
 
@@ -28,7 +28,7 @@ namespace TagHelperComponentRazorPages.TagHelpers
 				output.PostContent.AppendHtml(style);            
 			}
 
-			return Task.FromResult(0);
+			return Task.CompletedTask;
 		}
 	}
 }

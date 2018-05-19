@@ -18,6 +18,10 @@
     <Content Remove="wwwroot\css\chartist.css" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Files\WeekDaysMarkup.html" />
+    <None Remove="Files\WeekendMarkup.html" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="wwwroot\css\chartist.css" />
   </ItemGroup>
   <ItemGroup>

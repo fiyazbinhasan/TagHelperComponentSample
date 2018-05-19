@@ -11,13 +11,14 @@ namespace TagHelperComponentRazorPages.TagHelpers
 			                      "</button>";
         
 		public int Order => _order;
-		private string _markup;
-		private int _order;
+
+		private readonly string _markup;
+		private readonly int _order;
 
 		public AddressTagHelperComponent(string markup = "", int order = 1)
 		{
 			_markup = markup;
-			_order = 1;
+			_order = order;
 		}
 
 		public void Init(TagHelperContext context) { }
