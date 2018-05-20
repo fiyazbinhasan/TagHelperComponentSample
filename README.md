@@ -169,7 +169,9 @@ public class AddressTagHelperComponent : ITagHelperComponent
 
 * `ProcessAsync()` checks equality for the `TagName` with the `address` element. It also make sure to inject `HTML` markups to `<address>` elements with an attribute of `printable`. 
 
-You can register the `AddressTagHelperComponent` like the other ones. However, you can also initialize and add the component directly from the `Razor` markup.
+You can register the `AddressTagHelperComponent` like the other ones. However, you can also initialize and add the component directly from the `Razor` markup. `ITagHelperComponentManager` is used to add/remove tag helper components from the application. Following demostrates such example,
+
+*Contact.cshtml*
 
 ```
 @using TagHelperComponentRazorPages.TagHelpers;
@@ -192,7 +194,7 @@ You can register the `AddressTagHelperComponent` like the other ones. However, y
 
 * `AddressTagHelperComponent` resides inside `TagHelperComponentRazorPages.TagHelpers` namespace.
 * `manager` is an instance of the view injected `ITagHelperComponentManager`.
-* `manager.Components.Add` adds the component to the application tag helper component collection.
+* `manager.Components.Add` adds the component to the application's tag helper component collection.
 
 This technique is useful when you want to control the injected `markup` and `order` of the component execution directly from the razor view. 
 
