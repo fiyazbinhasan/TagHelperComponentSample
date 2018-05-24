@@ -1,5 +1,7 @@
 # ASP.NET Core Tag Helper Compoenents
 
+### Overview
+
 In theory, a tag helper component is really just a plain old tag helper. The main difference point is a tag helper component lets you modify/add `HTML` elements from server side code. ASP.NET Core ships with two built-in tag helper components i.e. `head` and `body`. They can be used both in MVC and Razor Pages. Following is the code for the built-in `head` tag helper componnent.
 
 ```
@@ -15,9 +17,9 @@ public class HeadTagHelper : TagHelperComponentTagHelper
 ```
 
 * A custom tag helper component class inherits from the `TagHelperComponentTagHelper` base class. 
-* `[HtmlTargetElement]` attribute, you can target any `HTML` element by passing the element name as a parameter. 
+* With `[HtmlTargetElement]` attribute, you can target any `HTML` element by passing the element name as a parameter. 
 * `[EditorBrowsable]` attribute decides wheather to show a type information in the IntelliSense or not. This is an optional attribute.
-* `ITagHlperComponentMananger` manages a collection of tag helper components used in the application.
+* `ITagHlperComponentMananger` manages a collection of tag helper components used thoughout the application.
 
 The `head` and `body` tag helper components are declared in the `Microsoft.AspNetCore.Mvc,TagHelpers` namespace like other tag helpers. In a MVC/Razor Pages application, all tag helpers are imported with the `@addTagHelper` directive in `_ViewImports.cshtml` file.
 
@@ -27,7 +29,11 @@ The `head` and `body` tag helper components are declared in the `Microsoft.AspNe
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 ```
 
-A typical usage of `<head>` element is that you can define page wide markup styles with `<style>` element. The following code dynamically adds styles in the `head` tag helepr component.
+### Use Cases
+
+*`head` tag helper component*
+
+A typical usage of `<head>` element is that you can define page wide markup styles with `<style>` element. The following code dynamically adds styles in the `<head>` element using the `head` tag helper component.
 
 ```
 public class StyleTagHelperComponent : ITagHelperComponent
@@ -59,22 +65,11 @@ public class StyleTagHelperComponent : ITagHelperComponent
 }
 ```
 
-* `StyleTagHelperComponent` implements `ITagHelperComponent`. The absctraction allows the class to initialize a `TagHelperContext` and make sure it can use tag helper components to add/modify `HTML` elements.
-* If you have multiple usage of tag helper componenets in an applicaiton, `Order` defines the order of execution.
-* `ProcessAsync()` checks whether a `TagName` of the runninng context is a `head` element. Once matched, it appends the content of the `_style` field with the `output`.
+* `StyleTagHelperComponent` implements `ITagHelperComponent`. The absctraction allows the class to be initialized with a `TagHelperContext`. It also make sure it can use tag helper components to add/modify `HTML` elements.
+* If you have multiple usage of tag helper componenets in an applicaiton, `Order` defines the rendering order of the components.
+* `ProcessAsync()` checks for a `TagName` inside the runninng context that matches the `head` element. If matched, it appends the content of the `_style` field with the `output` of the `<head>` element.
 
-Implemented tag helper component class must be registered with the depenecy injection system. Following code from `ConfigureServices` of `Startup.cs` registers the `StyleTagHelperComponent` with a `Transient` lifetime.
-
-*Startup.cs*
-
-```
-public void ConfigureServices(IServiceCollection services)
-{
-	services.AddTransient<ITagHelperComponent, StyleTagHelperComponent>();
-}
-```
-
-Runnning, the application will reflect a style change to every `<address>` element with an attribute of `printable`. 
+*`body` tag helper component*
 
 Similarly, you can use the `body` tag helper component to inject js scripts inside your `<body>` element. Followinng code demostrates such example,
 
@@ -98,7 +93,7 @@ public class ScriptTagHelperComponent : ITagHelperComponent
 }
 ```
 
-The code above reads the content of `AddressToolTipScript.html` and appends it with the tag helper output. `AddressToolTipScript.html` file contains the following markup,
+You can use sperate `HTML` files to store your `scripts` and `styles` elements. It makes the code more cleaner and maintainable. The code above reads the content of `AddressToolTipScript.html` and appends it with the tag helper output. `AddressToolTipScript.html` file contains the following markup,
 
 *AddressToolTipScript.html*
 
@@ -116,7 +111,9 @@ $("address[printable]").hover(function() {
 
 > The script dynamically adds a `bootstrap` tooltip menu on a `<address>` element with an attached attribute of `printable`. The effect is visible when a mouse pointer hovers over the element.
 
-Like the `StyleTagHelperComponent`, the `ScriptTagHelperComponent` must also be registered with the dependency injection system,
+### Dependency Injection
+
+Implemented tag helper component classes must be registered with the depenecy injection system if you are not managing the instances with `ITagHelperComponentManager`. Following code from `ConfigureServices` of `Startup.cs` registers both the `StyleTagHelperComponent` and `ScriptTagHelperComponent` with a `Transient` lifetime.
 
 *Startup.cs*
 
@@ -124,10 +121,13 @@ Like the `StyleTagHelperComponent`, the `ScriptTagHelperComponent` must also be 
 public void ConfigureServices(IServiceCollection services)
 {
 	services.AddTransient<ITagHelperComponent, ScriptTagHelperComponent>();
+	services.AddTransient<ITagHelperComponent, StyleTagHelperComponent>();
 }
 ```
 
-You can build your own custom tag helper component; following the same technique used for the build-in `head` and `body` tag helper component. Following is a custom tag helper component that targets the `<address>` element.
+### Custom Tag Helper Components
+
+You can build your own custom tag helper component; following the same technique used for the build-in `head` and `body` tag helpers. Following is a custom tag helper component that targets the `<address>` element.
 
 *AddressTagHelperComponentTagHelper.cs*
 
@@ -167,9 +167,11 @@ public class AddressTagHelperComponent : ITagHelperComponent
 }
 ```
 
-* `ProcessAsync()` checks equality for the `TagName` with the `address` element. It also make sure to inject `HTML` markups to `<address>` elements with an attribute of `printable`. 
+* `ProcessAsync()` checks equality for the `TagName` with the `address` element.  If matched, it inject `HTML` markups to `<address>` elements with an attribute of `printable`. 
 
-You can register the `AddressTagHelperComponent` like the other ones. However, you can also initialize and add the component directly from the `Razor` markup. `ITagHelperComponentManager` is used to add/remove tag helper components from the application. Following demostrates such example,
+### Managing components with `ITagHelperComponentManager`
+
+You can register the `AddressTagHelperComponent` with the DI system like the other ones. However, you can also initialize and add the component directly from the `Razor` markup. `ITagHelperComponentManager` is used to add/remove tag helper components from the application. Following demostrates such example,
 
 *Contact.cshtml*
 
@@ -192,7 +194,6 @@ You can register the `AddressTagHelperComponent` like the other ones. However, y
 }
 ```
 
-* `AddressTagHelperComponent` resides inside `TagHelperComponentRazorPages.TagHelpers` namespace.
 * `manager` is an instance of the view injected `ITagHelperComponentManager`.
 * `manager.Components.Add` adds the component to the application's tag helper component collection.
 
