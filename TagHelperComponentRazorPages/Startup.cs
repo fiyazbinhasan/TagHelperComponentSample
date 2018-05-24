@@ -36,9 +36,9 @@ namespace TagHelperComponentRazorPages
 
             
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            
+
+            services.AddTransient<ITagHelperComponent, StyleTagHelperComponent>();
             services.AddTransient<ITagHelperComponent, ScriptTagHelperComponent>();
-			services.AddTransient<ITagHelperComponent, StyleTagHelperComponent>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Contact";
 }
-@*@using TagHelperComponentRazorPages.TagHelpers;
+@using TagHelperComponentRazorPages.TagHelpers;
 @inject Microsoft.AspNetCore.Mvc.Razor.TagHelpers.ITagHelperComponentManager manager;
 @{
     string markup;
@@ -18,7 +18,7 @@
     }
 
     manager.Components.Add(new AddressTagHelperComponent(markup, 1));
-}*@
+}
 
 <h2>@ViewData["Title"]</h2>
 <h3>@Model.Message</h3>
