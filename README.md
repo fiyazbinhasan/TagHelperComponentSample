@@ -1,4 +1,4 @@
-# ASP.NET Core Tag Helper Compoenents
+# ASP.NET Core Tag Helper Components
 
 ### Overview
 
